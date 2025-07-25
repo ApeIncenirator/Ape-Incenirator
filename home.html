@@ -316,57 +316,74 @@ function handleWalletConnected(address) {
 
     </script>
     <script>
-// État global pour stocker l'adresse connectée
 let connectedAddress = null;
-
-async function connectMetamask() {
-    if (typeof window.ethereum === 'undefined') {
-        alert("MetaMask is not installed!");
-        return;
+const APECHAIN_PARAMS = {
+    chainId: '0x149a', // 5274 en hex
+    chainName: 'ApeChain',
+    rpcUrls: ['https://rpc.apechain.xyz'],
+    nativeCurrency: {
+        name: 'ApeCoin',
+        symbol: 'APE',
+        decimals: 18
     }
+};
 
+async function toggleWalletPopup() {
+    const popup = document.getElementById("walletPopup");
+    const overlay = document.getElementById("overlay");
+    const show = popup.style.display !== "block";
+    popup.style.display = show ? "block" : "none";
+    overlay.style.display = show ? "block" : "none";
+}
+
+async function switchToApeChain() {
     try {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const address = accounts[0];
-
         await window.ethereum.request({
-            method: "personal_sign",
-            params: [
-                `Connect to Ape Incenirator with address ${address}`,
-                address
-            ]
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: APECHAIN_PARAMS.chainId }]
         });
-
-        handleWalletConnected(address);
-    } catch (err) {
-        console.error(err);
-        alert("Connection failed.");
+    } catch (switchError) {
+        if (switchError.code === 4902) {
+            await window.ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [APECHAIN_PARAMS]
+            });
+        } else {
+            throw switchError;
+        }
     }
 }
 
+async function connectMetamask() {
+    if (!window.ethereum) return alert("MetaMask not installed!");
+    await switchToApeChain();
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const address = accounts[0];
+    await signAndHandleConnection(address);
+}
+
 async function connectRabby() {
-    if (typeof window.ethereum === 'undefined') {
-        alert("Rabby (or compatible wallet) not detected!");
-        return;
-    }
+    if (!window.ethereum) return alert("Rabby not detected!");
+    await switchToApeChain();
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const address = accounts[0];
+    await signAndHandleConnection(address);
+}
 
-    try {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const address = accounts[0];
+async function signAndHandleConnection(address) {
+    await window.ethereum.request({
+        method: "personal_sign",
+        params: [
+            `Connect to Ape Incenirator with address ${address}`,
+            address
+        ]
+    });
+    handleWalletConnected(address);
+}
 
-        await window.ethereum.request({
-            method: "personal_sign",
-            params: [
-                `Connect to Ape Incenirator with address ${address}`,
-                address
-            ]
-        });
-
-        handleWalletConnected(address);
-    } catch (err) {
-        console.error(err);
-        alert("Connection failed.");
-    }
+function disconnectWallet() {
+    connectedAddress = null;
+    location.reload();
 }
 
 function handleWalletConnected(address) {
@@ -377,8 +394,9 @@ function handleWalletConnected(address) {
     document.getElementById("walletPopup").style.display = "none";
     document.getElementById("overlay").style.display = "none";
 
-    // Affiche le bouton profil et déconnecter
     const rightSection = document.querySelector('.right-section');
+    rightSection.innerHTML = ''; // Clear old buttons
+
     const profileButton = document.createElement("button");
     profileButton.textContent = "Profil";
     profileButton.className = "connect-button";
@@ -393,13 +411,7 @@ function handleWalletConnected(address) {
     rightSection.appendChild(profileButton);
     rightSection.appendChild(logoutButton);
 
-    // Crée les tableaux d'assets
     displayAssets();
-}
-
-function disconnectWallet() {
-    connectedAddress = null;
-    location.reload(); // Recharge la page
 }
 
 function displayAssets() {
@@ -426,26 +438,79 @@ function displayAssets() {
         th.style.padding = "10px";
         tr.appendChild(th);
         thead.appendChild(tr);
+        table.appendChild(thead);
 
         const tbody = document.createElement("tbody");
-        for (let i = 1; i <= 5; i++) {
-            const row = document.createElement("tr");
-            const cell = document.createElement("td");
-            cell.textContent = `${type} #${i}`;
-            cell.style.border = "1px solid #ffcc00";
-            cell.style.padding = "8px";
-            row.appendChild(cell);
-            tbody.appendChild(row);
-        }
-
-        table.appendChild(thead);
         table.appendChild(tbody);
         assetContainer.appendChild(table);
+
+        if (type === "Tokens") fetchTokenBalances(tbody);
+        if (type === "Cleanup") fetchTokenBalances(tbody, true);
+        if (type === "NFT") fetchNFTs(tbody, false);
+        if (type === "CNFT") fetchNFTs(tbody, true);
     });
 
     document.body.appendChild(assetContainer);
 }
+
+function fetchTokenBalances(tbody, isCleanup = false) {
+    fetch("https://rpc.apechain.xyz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            jsonrpc: "2.0",
+            method: "alchemy_getTokenBalances",
+            params: [connectedAddress],
+            id: 1
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const tokens = data.result.tokenBalances;
+        tokens.forEach(t => {
+            const balance = BigInt(t.tokenBalance || "0x0");
+            if (balance > 0n) {
+                const shortAddr = t.contractAddress.slice(0, 6) + "..." + t.contractAddress.slice(-4);
+                if ((isCleanup && shortAddr.includes("00")) || !isCleanup) {
+                    const row = document.createElement("tr");
+                    const cell = document.createElement("td");
+                    cell.textContent = `${shortAddr} : ${balance}`;
+                    cell.style.border = "1px solid #ffcc00";
+                    cell.style.padding = "8px";
+                    cell.onclick = () => toggleSelection(row);
+                    row.appendChild(cell);
+                    tbody.appendChild(row);
+                }
+            }
+        });
+    });
+}
+
+function fetchNFTs(tbody, compressed = false) {
+    // À personnaliser selon ton API NFT (ex: Covalent, Moralis, Alchemy NFT API)
+    const dummy = [
+        { name: "Gorilla NFT", id: "0xabc123", compressed: false },
+        { name: "Pepe NFT", id: "0xdef456", compressed: true }
+    ];
+    dummy.forEach(nft => {
+        if (nft.compressed === compressed) {
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+            cell.textContent = nft.name + " (" + nft.id.slice(0, 6) + "...)";
+            cell.style.border = "1px solid #ffcc00";
+            cell.style.padding = "8px";
+            row.appendChild(cell);
+            row.onclick = () => toggleSelection(row);
+            tbody.appendChild(row);
+        }
+    });
+}
+
+function toggleSelection(row) {
+    row.style.backgroundColor = row.style.backgroundColor === "yellow" ? "" : "yellow";
+}
 </script>
+
 
 </body>
 
