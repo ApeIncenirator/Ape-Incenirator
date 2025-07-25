@@ -428,15 +428,39 @@ function displayAssets() {
         thead.appendChild(tr);
 
         const tbody = document.createElement("tbody");
-        for (let i = 1; i <= 5; i++) {
-            const row = document.createElement("tr");
-            const cell = document.createElement("td");
-            cell.textContent = `${type} #${i}`;
-            cell.style.border = "1px solid #ffcc00";
-            cell.style.padding = "8px";
-            row.appendChild(cell);
-            tbody.appendChild(row);
-        }
+       if (type === "Tokens") {
+    fetch("https://rpc.apechain.xyz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            jsonrpc: "2.0",
+            method: "alchemy_getTokenBalances",
+            params: [connectedAddress],
+            id: 1
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const balances = data.result.tokenBalances;
+        balances.forEach(token => {
+            const raw = BigInt(token.tokenBalance || "0x0");
+            if (raw > 0n) {
+                const row = document.createElement("tr");
+                const cell = document.createElement("td");
+                const shortAddr = token.contractAddress.slice(0, 6) + "..." + token.contractAddress.slice(-4);
+                cell.textContent = `${shortAddr} : ${raw}`;
+                cell.style.border = "1px solid #ffcc00";
+                cell.style.padding = "8px";
+                row.appendChild(cell);
+                tbody.appendChild(row);
+            }
+        });
+    })
+    .catch(err => {
+        console.error("Error fetching token balances", err);
+    });
+}
+
 
         table.appendChild(thead);
         table.appendChild(tbody);
