@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ape Incenirator</title>
+    <style>
+
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1500;
+        }
+
+        body {
+            margin: 0;
+            background-color: #1a1a1a;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 180px;
+            background-color: #2a2a2a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            z-index: 1000;
+            position: relative;
+        }
+
+        .left-section,
+        .right-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .left-section {
+            position: absolute;
+            top: 18%;
+            left: 3.5%;
+            gap: 10px;
+        }
+
+        .center-section {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo {
+            height: 100%;
+            max-height: 180px;
+        }
+
+        .connect-button {
+            padding: 12px 20px;
+            background-color: #ffcc00;
+            color: black;
+            border: none;
+            position: fixed;
+            top: 7.3%;
+            left: 91%;
+            border-radius: 654px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 200px auto 40px auto;
+            padding: 20px;
+            background-color: #2a2a2a;
+            border-radius: 8px;
+        }
+
+        h1 {
+            color: #ffcc00;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+        }
+
+        .faq-question {
+            color: #ffcc00;
+            font-weight: bold;
+        }
+
+        .faq-answer {
+            color: white;
+        }
+
+
+        .wallet-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #2a2a2a;
+            border: 2px solid #ffcc00;
+            border-radius: 8px;
+            padding: 20px;
+            z-index: 2000;
+        }
+
+        .wallet-popup h3 {
+            color: #ffcc00;
+            margin-top: 0;
+        }
+
+        .wallet-popup button {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background-color: #ffcc00;
+            color: black;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .left-section span {
+            font-size: 48px;
+        }
+        .banner-title {
+    position: absolute;
+    top: -10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 162px;
+    color: white;
+    opacity: 0.4;
+    width: 100%;
+    text-align: center;
+    z-index: 1500;
+    pointer-events: none;
+        }
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1 class="banner-title">APE INCENIRATOR</h1>
+
+        <div class="left-section">
+            <div>
+                <a href="https://x.com/apeincenirator" target="_blank">
+                    <img src="logoX.png" alt="Twitter" height="104">
+                </a>
+            </div>
+        </div>
+
+        <div class="center-section">
+            <img src="logo.png" alt="Logo" height="214" />
+        </div>
+
+        <div class="right-section">
+            <button class="connect-button" onclick="toggleWalletPopup()">Connect Wallet</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>What is Ape Incenirator?</h1>
+        <p>This site allows you to burn cNFTs, NFTs, Tokens and CleanUp your assets to reclaim APE and tidy up your wallet.</p>
+
+        <div class="faq-item">
+            <div class="faq-question">Where is the reclaimed APE coming from?</div>
+            <div class="faq-answer">Any accounts on ApeChain require a small storage fee to open them. By burning a token, we can close this account and reclaim the storage fee.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">How much can I reclaim from burning?</div>
+            <div class="faq-answer">Most NFTs will give you 0.05 APE when you burn. Most tokens will give you 0.1 APE. Finally, compressed NFTs unfortunately cannot reclaim any SOL.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">What does "cleanup" do?</div>
+            <div class="faq-answer">Cleanup closes vacant token accounts and unused serum accounts. Any NFT or unique token requires an account to store it. Whenever you list, transfer or dispose of the token or NFT, the account is left empty and can be closed to reclaim a small amount of APE. Some token swaps or exchanges also require a serum account to store some swap related data. This account can be safely closed once the swap has completed to again reclaim a small amount of APE. This operation is completely safe to perform. It does not have any effect on the NFTs & tokens in your wallet or limit orders on exchanges. In rare instances some dApps may not create token accounts as needed. This is a bug and should be reported to that dApps' developer via email. apeincenirator@gmx.fr</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">Why can't I see my wallet to connect it?</div>
+            <div class="faq-answer">If you're on mobile, open the site inside your wallet's browser.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">Why can't I reclaim any APE from a compressed NFT?</div>
+            <div class="faq-answer">To make compressed NFTs cheaper to mint, the metadata and token accounts are not stored on chain like normal. Instead, they are indexed off chain. While this makes them cheaper to mint, it also means there are no accounts to close on chain, and reclaim the APE from.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">Do you charge any fees?</div>
+            <div class="faq-answer">Yes, we charge roughly 2-5% fees depending on the exact type of item being burnt. Cleaning up vacant accounts has a 2.3% fee, resizing NFTs has a 5% fee, burning NFTs has a 5% fee, and so on. These fees helps fund further development of the Incinerator, along with ongoing costs such as RPCs and hosting. Note: this fee is taken from the reclaimed APE - you will never lose APE by burning, you can only gain it.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">How can I burn an LP (Liquidity Pool)?</div>
+            <div class="faq-answer">You can't burn LPs.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">Can I get rich burning tokens one by one?</div>
+            <div class="faq-answer">The APE you reclaim from burning is achieved by closing the account that stores that token. This amount is the same regardless of whether the account holds 1 or 100,000 tokens. Also, if you try to send 1 token at a time to a new account, this would be futile, as you'd need to pay to instantiate new token accounts, negating any profit you'd make.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">Who made the Ape Incenirator?</div>
+            <div class="faq-answer">Created by JK Labs. Visit our Twitter for more info!</div>
+        </div>
+    </div>
+
+    <div id="overlay" onclick="toggleWalletPopup()"></div>
+
+    <div class="wallet-popup" id="walletPopup">
+        <h3>Connect your wallet</h3>
+        <button onclick="connectMetamask()">Connect with MetaMask</button>
+        <button onclick="connectRabby()">Connect with Rabby</button>
+    </div>
+
+    <script>
+        function toggleWalletPopup() {
+            const popup = document.getElementById("walletPopup");
+            const overlay = document.getElementById("overlay");
+            const show = popup.style.display !== "block";
+            popup.style.display = show ? "block" : "none";
+            overlay.style.display = show ? "block" : "none";
+        }
+
+
+        async function connectMetamask() {
+    if (typeof window.ethereum === 'undefined') {
+        alert("MetaMask is not installed!");
+        return;
+    }
+
+    try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const address = accounts[0];
+
+        await window.ethereum.request({
+            method: "personal_sign",
+            params: [
+                `Connect to Ape Incenirator with address ${address}`,
+                address
+            ]
+        });
+
+        handleWalletConnected(address);
+    } catch (err) {
+        console.error(err);
+        alert("Connection failed.");
+    }
+}
+
+async function connectRabby() {
+    if (typeof window.ethereum === 'undefined') {
+        alert("Rabby (or compatible wallet) not detected!");
+        return;
+    }
+
+    try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const address = accounts[0];
+
+        await window.ethereum.request({
+            method: "personal_sign",
+            params: [
+                `Connect to Ape Incenirator with address ${address}`,
+                address
+            ]
+        });
+
+        handleWalletConnected(address);
+    } catch (err) {
+        console.error(err);
+        alert("Connection failed.");
+    }
+}
+
+function handleWalletConnected(address) {
+    console.log("Wallet connected:", address);
+
+    // Fetch ApeChain assets (example for ERC-20 tokens)
+    fetch("https://rpc.apechain.xyz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            jsonrpc: "2.0",
+            method: "eth_getBalance",
+            params: [address, "latest"],
+            id: 1
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const balanceInWei = BigInt(data.result);
+        const balanceInEth = Number(balanceInWei) / 1e18;
+        alert(`Connected wallet address:\n${address}\nAPE Balance: ${balanceInEth} APE`);
+    })
+    .catch(err => {
+        console.error("Error fetching balance:", err);
+        alert("Failed to fetch ApeChain assets.");
+    });
+}
+
+
+    </script>
+    <script>
+// État global pour stocker l'adresse connectée
+let connectedAddress = null;
+
+async function connectMetamask() {
+    if (typeof window.ethereum === 'undefined') {
+        alert("MetaMask is not installed!");
+        return;
+    }
+
+    try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const address = accounts[0];
+
+        await window.ethereum.request({
+            method: "personal_sign",
+            params: [
+                `Connect to Ape Incenirator with address ${address}`,
+                address
+            ]
+        });
+
+        handleWalletConnected(address);
+    } catch (err) {
+        console.error(err);
+        alert("Connection failed.");
+    }
+}
+
+async function connectRabby() {
+    if (typeof window.ethereum === 'undefined') {
+        alert("Rabby (or compatible wallet) not detected!");
+        return;
+    }
+
+    try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const address = accounts[0];
+
+        await window.ethereum.request({
+            method: "personal_sign",
+            params: [
+                `Connect to Ape Incenirator with address ${address}`,
+                address
+            ]
+        });
+
+        handleWalletConnected(address);
+    } catch (err) {
+        console.error(err);
+        alert("Connection failed.");
+    }
+}
+
+function handleWalletConnected(address) {
+    connectedAddress = address;
+
+    document.querySelector('.connect-button').style.display = "none";
+    document.querySelector('.container').style.display = "none";
+    document.getElementById("walletPopup").style.display = "none";
+    document.getElementById("overlay").style.display = "none";
+
+    // Affiche le bouton profil et déconnecter
+    const rightSection = document.querySelector('.right-section');
+    const profileButton = document.createElement("button");
+    profileButton.textContent = "Profil";
+    profileButton.className = "connect-button";
+    profileButton.onclick = () => window.location.href = "user.html";
+
+    const logoutButton = document.createElement("button");
+    logoutButton.textContent = "Déconnecter";
+    logoutButton.className = "connect-button";
+    logoutButton.style.marginLeft = "10px";
+    logoutButton.onclick = disconnectWallet;
+
+    rightSection.appendChild(profileButton);
+    rightSection.appendChild(logoutButton);
+
+    // Crée les tableaux d'assets
+    displayAssets();
+}
+
+function disconnectWallet() {
+    connectedAddress = null;
+    location.reload(); // Recharge la page
+}
+
+function displayAssets() {
+    const assetContainer = document.createElement("div");
+    assetContainer.style.display = "flex";
+    assetContainer.style.justifyContent = "space-around";
+    assetContainer.style.margin = "40px";
+    assetContainer.style.gap = "20px";
+
+    const types = ["Tokens", "Cleanup", "NFT", "CNFT"];
+    types.forEach(type => {
+        const table = document.createElement("table");
+        table.style.border = "2px solid #ffcc00";
+        table.style.color = "white";
+        table.style.minWidth = "150px";
+        table.style.borderCollapse = "collapse";
+
+        const thead = document.createElement("thead");
+        const tr = document.createElement("tr");
+        const th = document.createElement("th");
+        th.textContent = type;
+        th.style.backgroundColor = "#2a2a2a";
+        th.style.color = "#ffcc00";
+        th.style.padding = "10px";
+        tr.appendChild(th);
+        thead.appendChild(tr);
+
+        const tbody = document.createElement("tbody");
+        for (let i = 1; i <= 5; i++) {
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+            cell.textContent = `${type} #${i}`;
+            cell.style.border = "1px solid #ffcc00";
+            cell.style.padding = "8px";
+            row.appendChild(cell);
+            tbody.appendChild(row);
+        }
+
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        assetContainer.appendChild(table);
+    });
+
+    document.body.appendChild(assetContainer);
+}
+</script>
+
+</body>
+
+</html>
