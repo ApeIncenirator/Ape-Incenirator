@@ -282,7 +282,8 @@
                 address
             ]
         });
-function displayAssets() {
+
+        function displayAssets() {
     const assetContainer = document.createElement("div");
     assetContainer.style.display = "flex";
     assetContainer.style.justifyContent = "space-around";
@@ -321,6 +322,7 @@ function displayAssets() {
 
     document.body.appendChild(assetContainer);
 }
+
         handleWalletConnected(address);
     } catch (err) {
     console.error("Wallet connection error:", err);
@@ -472,23 +474,6 @@ async function fetchNFTs(tbody, compressed = false) {
         row.onclick = () => toggleSelection(row);
         row.appendChild(cell);
         tbody.appendChild(row);
-    });
-}
-
-
-function fetchNFTs(tbody, compressed = false) {
-    // À personnaliser selon ton API NFT (ex: Covalent, Moralis, Alchemy NFT API)
-    dummy.forEach(nft => {
-        if (nft.compressed === compressed) {
-            const row = document.createElement("tr");
-            const cell = document.createElement("td");
-            cell.textContent = nft.name + " (" + nft.id.slice(0, 6) + "...)";
-            cell.style.border = "1px solid #ffcc00";
-            cell.style.padding = "8px";
-            row.appendChild(cell);
-            row.onclick = () => toggleSelection(row);
-            tbody.appendChild(row);
-        }
     });
 }
 
