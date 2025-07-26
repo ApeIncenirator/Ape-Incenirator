@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ape Incenirator</title>
+</head>
+<body>
+  <button onclick="connectMetamask()">Connect with MetaMask</button>
+
+  <script>
+    const apeChainParams = {
+      chainId: '0x8183',
+      chainName: 'ApeChain',
+      nativeCurrency: {
+        name: 'ApeCoin',
+        symbol: 'APE',
+        decimals: 18
+      },
+      rpcUrls: ['https://rpc.apechain.com/http'],
+      blockExplorerUrls: ['https://apescan.io']
+    };
+
+    async function switchToApeChain() {
+      const chainIdHex = '0x8183';
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: chainIdHex }],
+        });
+      } catch (switchError) {
+        if (switchError.code === 4902) {
+          try {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [apeChainParams]
+            });
+          } catch (addError) {
+            console.error('Erreur ajout réseau:', addError);
+          }
+        } else {
+          console.error('Erreur switch réseau:', switchError);
+        }
+      }
+    }
+
+    async function connectMetamask() {
+      if (typeof window.ethereum === 'undefined') {
+        alert("MetaMask is not installed!");
+        return;
+      }
+
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const address = accounts[0];
+        await switchToApeChain();
+
+        await window.ethereum.request({
+          method: "personal_sign",
+          params: [
+            `Connect to Ape Incenirator with address ${address}`,
+            address
+          ]
+        });
+
+        handleWalletConnected(address);
+      } catch (err) {
+        console.error(err);
+        alert("Connection failed.");
+      }
+    }
+
+    function handleWalletConnected(address) {
+      console.log("Connected address:", address);
+    }
+  </script>
+</body>
+</html>
