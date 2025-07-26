@@ -251,8 +251,9 @@
 
     <div class="wallet-popup" id="walletPopup">
         <h3>Connect your wallet</h3>
-        <button onclick="connectMetamask()">Connect with MetaMask</button>
-        <button onclick="connectRabby()">Connect with Rabby</button>
+        <button id="metamask-btn">Connect with MetaMask</button>
+        <button id="rabby-btn">Connect with Rabby</button>
+
     </div>
 
     <script>
@@ -264,30 +265,6 @@
             overlay.style.display = show ? "block" : "none";
         }
 
-async function connectRabby() {
-    if (typeof window.ethereum === 'undefined') {
-        alert("Rabby (or compatible wallet) not detected!");
-        return;
-    }
-
-    try {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const address = accounts[0];
-
-        await window.ethereum.request({
-            method: "personal_sign",
-            params: [
-                `Connect to Ape Incenirator with address ${address}`,
-                address
-            ]
-        });
-
-        handleWalletConnected(address);
-    } catch (err) {
-        console.error(err);
-        alert("Connection failed.");
-    }
-}
     </script>
     <script>
 let connectedAddress = null;
@@ -347,6 +324,17 @@ async function signAndHandleConnection(address) {
         ]
     });
     handleWalletConnected(address);
+} catch (err) {
+        alert("Connection failed: " + err.message);
+        console.error(err);
+
+        // Réafficher la FAQ et cacher les colonnes
+        document.querySelector('.container').style.display = "block";
+        document.getElementById("token-column").style.display = "none";
+        document.getElementById("cleanup-column").style.display = "none";
+        document.getElementById("nft-column").style.display = "none";
+        document.getElementById("cnft-column").style.display = "none";
+    }
 }
 
 function disconnectWallet() {
@@ -519,6 +507,12 @@ function handleWalletConnected(address) {
     // Affichage des assets
     displayAssets();
 }
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("metamask-btn").addEventListener("click", connectMetamask);
+    document.getElementById("rabby-btn").addEventListener("click", connectRabby);
+  });
 </script>
 
 </body>
