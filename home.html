@@ -474,17 +474,22 @@ function displayAssets() {
     document.body.appendChild(assetContainer);
 }
 
-function fetchTokenBalances(tbody, isCleanup = false) {
-    fetch("https://rpc.apechain.xyz", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            jsonrpc: "2.0",
-            method: "alchemy_getTokenBalances",
-            params: [connectedAddress],
-            id: 1
-        })
-    })
+function fetchTokenBalances(tbody) {
+  const dummyTokens = [
+    { name: "Banana", balance: 420 },
+    { name: "Pepe", balance: 69 }
+  ];
+  dummyTokens.forEach(t => {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.textContent = `${t.name}: ${t.balance}`;
+    cell.style.border = "1px solid #ffcc00";
+    cell.style.padding = "8px";
+    row.onclick = () => toggleSelection(row);
+    row.appendChild(cell);
+    tbody.appendChild(row);
+  });
+}
     .then(res => res.json())
     .then(data => {
         const tokens = data.result.tokenBalances;
