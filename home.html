@@ -174,6 +174,8 @@
 
         <div class="right-section">
             <button class="connect-button" onclick="toggleWalletPopup()">Connect Wallet</button>
+            <button id="connect-wallet" onclick="connectWallet()">Connect Wallet</button>
+
         </div>
     </header>
 
@@ -217,6 +219,32 @@
             <div class="faq-question">Who made the Ape Incenirator?</div>
             <div class="faq-answer">Created by JK Labs. Visit our Twitter for more info!</div>
         </div>
+<div id="token-column" style="display:none; border: 1px solid yellow;">
+  <h3>Tokens</h3>
+  <table id="tokens-table"></table>
+</div>
+
+<div id="cleanup-column" style="display:none; border: 1px solid yellow;">
+  <h3>Cleanup</h3>
+  <table id="cleanup-table"></table>
+</div>
+
+<div id="nft-column" style="display:none; border: 1px solid yellow;">
+  <h3>NFTs</h3>
+  <table id="nft-table"></table>
+</div>
+
+<div id="cnft-column" style="display:none; border: 1px solid yellow;">
+  <h3>cNFTs</h3>
+  <table id="cnft-table"></table>
+</div>
+
+<!-- Boutons du haut à droite -->
+<div id="wallet-controls" style="position:absolute; top:20px; right:20px;">
+  <button id="connect-wallet" onclick="connectWallet()">Connect Wallet</button>
+  <button id="profile-button" style="display:none;" onclick="window.location.href='user.html'">Profil</button>
+  <button id="disconnect-button" style="display:none;" onclick="disconnectWallet()">Déconnecter</button>
+</div>
     </div>
 
     <div id="overlay" onclick="toggleWalletPopup()"></div>
@@ -539,6 +567,60 @@ function toggleSelection(row) {
 }
 </script>
 
+<script>
+function disconnectWallet() {
+    // Masquer le bouton profil et déconnexion
+    document.getElementById("profile-button").style.display = "none";
+    document.getElementById("disconnect-button").style.display = "none";
+
+    // Réafficher bouton "Connect Wallet"
+    document.getElementById("connect-wallet").style.display = "block";
+
+    // Vider les tableaux (optionnel si tu veux nettoyer la page)
+    document.getElementById("tokens-table").innerHTML = "";
+    document.getElementById("cleanup-table").innerHTML = "";
+    document.getElementById("nft-table").innerHTML = "";
+    document.getElementById("cnft-table").innerHTML = "";
+
+    // Réafficher la FAQ
+    document.getElementById("faq").style.display = "block";
+}
+</script>
+
+    <script>
+async function connectWallet() {
+    try {
+        const provider = window.ethereum;
+        const accounts = await provider.request({ method: 'eth_requestAccounts' });
+        const walletAddress = accounts[0];
+
+        if (walletAddress) {
+            // Connexion réussie
+            document.getElementById("connect-wallet").style.display = "none";
+            document.getElementById("profile-button").style.display = "inline-block";
+            document.getElementById("disconnect-button").style.display = "inline-block";
+            document.getElementById("faq").style.display = "none";
+
+            // afficher les colonnes
+            document.getElementById("token-column").style.display = "block";
+            document.getElementById("cleanup-column").style.display = "block";
+            document.getElementById("nft-column").style.display = "block";
+            document.getElementById("cnft-column").style.display = "block";
+
+            // ici tu lances tes appels API
+        }
+    } catch (error) {
+        alert("Connection failed: " + error.message);
+
+        // Réafficher la FAQ + cacher les colonnes
+        document.getElementById("faq").style.display = "block";
+        document.getElementById("token-column").style.display = "none";
+        document.getElementById("cleanup-column").style.display = "none";
+        document.getElementById("nft-column").style.display = "none";
+        document.getElementById("cnft-column").style.display = "none";
+    }
+}
+</script>
 
 </body>
 
