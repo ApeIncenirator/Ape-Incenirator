@@ -257,9 +257,10 @@
 
         handleWalletConnected(address);
     } catch (err) {
-        console.error(err);
-        alert("Connection failed.");
+    console.error("Wallet connection error:", err);
+    alert("Connection failed: " + err.message);
     }
+
 }
 
 async function connectRabby() {
@@ -288,6 +289,11 @@ async function connectRabby() {
 }
 
 function handleWalletConnected(address) {
+    if (!address) {
+        console.error("No wallet address detected");
+        return;
+    }
+
     connectedAddress = address;
 
     document.querySelector('.connect-button').style.display = "none";
