@@ -316,15 +316,16 @@ async function connectRabby() {
 }
 
 async function signAndHandleConnection(address) {
-    await window.ethereum.request({
-        method: "personal_sign",
-        params: [
-            `Connect to Ape Incenirator with address ${address}`,
-            address
-        ]
-    });
-    handleWalletConnected(address);
-} catch (err) {
+    try {
+        await window.ethereum.request({
+            method: "personal_sign",
+            params: [
+                `Connect to Ape Incenirator with address ${address}`,
+                address
+            ]
+        });
+        handleWalletConnected(address);
+    } catch (err) {
         alert("Connection failed: " + err.message);
         console.error(err);
 
@@ -336,6 +337,7 @@ async function signAndHandleConnection(address) {
         document.getElementById("cnft-column").style.display = "none";
     }
 }
+
 
 function disconnectWallet() {
     connectedAddress = null;
