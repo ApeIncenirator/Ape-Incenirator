@@ -315,42 +315,6 @@ async function connectRabby() {
         alert("Connection failed.");
     }
 }
-
-function handleWalletConnected(address) {
-    if (!address) {
-        console.error("No wallet address detected");
-        return;
-    }
-
-    connectedAddress = address;
-
-    document.querySelector('.connect-button').style.display = "none";
-    document.querySelector('.container').style.display = "none";
-    document.getElementById("walletPopup").style.display = "none";
-    document.getElementById("overlay").style.display = "none";
-
-    const rightSection = document.querySelector('.right-section');
-    rightSection.innerHTML = ''; // Clear old buttons
-
-    const profileButton = document.createElement("button");
-    profileButton.textContent = "Profil";
-    profileButton.className = "connect-button";
-    profileButton.onclick = () => window.location.href = "user.html";
-
-    const logoutButton = document.createElement("button");
-    logoutButton.textContent = "Déconnecter";
-    logoutButton.className = "connect-button";
-    logoutButton.style.marginLeft = "10px";
-    logoutButton.onclick = disconnectWallet;
-
-    rightSection.appendChild(profileButton);
-    rightSection.appendChild(logoutButton);
-
-    displayAssets();  // ✅ <--- C'EST CETTE LIGNE QUI AFFICHE LES TABLEAUX
-}
-
-
-
     </script>
     <script>
 let connectedAddress = null;
@@ -415,34 +379,6 @@ async function signAndHandleConnection(address) {
 function disconnectWallet() {
     connectedAddress = null;
     location.reload();
-}
-
-function handleWalletConnected(address) {
-    connectedAddress = address;
-
-    document.querySelector('.connect-button').style.display = "none";
-    document.querySelector('.container').style.display = "none";
-    document.getElementById("walletPopup").style.display = "none";
-    document.getElementById("overlay").style.display = "none";
-
-    const rightSection = document.querySelector('.right-section');
-    rightSection.innerHTML = ''; // Clear old buttons
-
-    const profileButton = document.createElement("button");
-    profileButton.textContent = "Profil";
-    profileButton.className = "connect-button";
-    profileButton.onclick = () => window.location.href = "user.html";
-
-    const logoutButton = document.createElement("button");
-    logoutButton.textContent = "Déconnecter";
-    logoutButton.className = "connect-button";
-    logoutButton.style.marginLeft = "10px";
-    logoutButton.onclick = disconnectWallet;
-
-    rightSection.appendChild(profileButton);
-    rightSection.appendChild(logoutButton);
-
-    displayAssets();
 }
 
 function displayAssets() {
@@ -544,10 +480,6 @@ async function fetchNFTs(tbody, compressed = false) {
 
 function fetchNFTs(tbody, compressed = false) {
     // À personnaliser selon ton API NFT (ex: Covalent, Moralis, Alchemy NFT API)
-    const dummy = [
-        { name: "Gorilla NFT", id: "0xabc123", compressed: false },
-        { name: "Pepe NFT", id: "0xdef456", compressed: true }
-    ];
     dummy.forEach(nft => {
         if (nft.compressed === compressed) {
             const row = document.createElement("tr");
@@ -569,56 +501,68 @@ function toggleSelection(row) {
 
 <script>
 function disconnectWallet() {
-    // Masquer le bouton profil et déconnexion
+    connectedAddress = null;
+
     document.getElementById("profile-button").style.display = "none";
     document.getElementById("disconnect-button").style.display = "none";
-
-    // Réafficher bouton "Connect Wallet"
     document.getElementById("connect-wallet").style.display = "block";
 
-    // Vider les tableaux (optionnel si tu veux nettoyer la page)
+    // Réaffiche la FAQ
+    document.querySelector('.container').style.display = "block";
+
+    // Cache les colonnes
+    document.getElementById("token-column").style.display = "none";
+    document.getElementById("cleanup-column").style.display = "none";
+    document.getElementById("nft-column").style.display = "none";
+    document.getElementById("cnft-column").style.display = "none";
+
+    // Vide les tableaux
     document.getElementById("tokens-table").innerHTML = "";
     document.getElementById("cleanup-table").innerHTML = "";
     document.getElementById("nft-table").innerHTML = "";
     document.getElementById("cnft-table").innerHTML = "";
-
-    // Réafficher la FAQ
-    document.getElementById("faq").style.display = "block";
 }
+
 </script>
 
-    <script>
-async function connectWallet() {
-    try {
-        const provider = window.ethereum;
-        const accounts = await provider.request({ method: 'eth_requestAccounts' });
-        const walletAddress = accounts[0];
+<script>
+function handleWalletConnected(address) {
+    connectedAddress = address;
 
-        if (walletAddress) {
-            // Connexion réussie
-            document.getElementById("connect-wallet").style.display = "none";
-            document.getElementById("profile-button").style.display = "inline-block";
-            document.getElementById("disconnect-button").style.display = "inline-block";
-            document.getElementById("faq").style.display = "none";
+    // Afficher/Désactiver éléments UI
+    document.querySelector('.connect-button').style.display = "none";
+    document.getElementById("walletPopup").style.display = "none";
+    document.getElementById("overlay").style.display = "none";
 
-            // afficher les colonnes
-            document.getElementById("token-column").style.display = "block";
-            document.getElementById("cleanup-column").style.display = "block";
-            document.getElementById("nft-column").style.display = "block";
-            document.getElementById("cnft-column").style.display = "block";
+    // Afficher la FAQ = FALSE
+    document.querySelector('.container').style.display = "none";
 
-            // ici tu lances tes appels API
-        }
-    } catch (error) {
-        alert("Connection failed: " + error.message);
+    // Afficher les colonnes
+    document.getElementById("token-column").style.display = "block";
+    document.getElementById("cleanup-column").style.display = "block";
+    document.getElementById("nft-column").style.display = "block";
+    document.getElementById("cnft-column").style.display = "block";
 
-        // Réafficher la FAQ + cacher les colonnes
-        document.getElementById("faq").style.display = "block";
-        document.getElementById("token-column").style.display = "none";
-        document.getElementById("cleanup-column").style.display = "none";
-        document.getElementById("nft-column").style.display = "none";
-        document.getElementById("cnft-column").style.display = "none";
-    }
+    // Boutons profil/déconnexion
+    const rightSection = document.querySelector('.right-section');
+    rightSection.innerHTML = '';
+
+    const profileButton = document.createElement("button");
+    profileButton.textContent = "Profil";
+    profileButton.className = "connect-button";
+    profileButton.onclick = () => window.location.href = "user.html";
+
+    const logoutButton = document.createElement("button");
+    logoutButton.textContent = "Déconnecter";
+    logoutButton.className = "connect-button";
+    logoutButton.style.marginLeft = "10px";
+    logoutButton.onclick = disconnectWallet;
+
+    rightSection.appendChild(profileButton);
+    rightSection.appendChild(logoutButton);
+
+    // Affichage des assets
+    displayAssets();
 }
 </script>
 
