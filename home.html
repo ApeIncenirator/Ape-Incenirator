@@ -288,8 +288,33 @@ async function connectRabby() {
 }
 
 function handleWalletConnected(address) {
-    console.log("Wallet connected:", address);
+    connectedAddress = address;
+
+    document.querySelector('.connect-button').style.display = "none";
+    document.querySelector('.container').style.display = "none";
+    document.getElementById("walletPopup").style.display = "none";
+    document.getElementById("overlay").style.display = "none";
+
+    const rightSection = document.querySelector('.right-section');
+    rightSection.innerHTML = ''; // Clear old buttons
+
+    const profileButton = document.createElement("button");
+    profileButton.textContent = "Profil";
+    profileButton.className = "connect-button";
+    profileButton.onclick = () => window.location.href = "user.html";
+
+    const logoutButton = document.createElement("button");
+    logoutButton.textContent = "Déconnecter";
+    logoutButton.className = "connect-button";
+    logoutButton.style.marginLeft = "10px";
+    logoutButton.onclick = disconnectWallet;
+
+    rightSection.appendChild(profileButton);
+    rightSection.appendChild(logoutButton);
+
+    displayAssets();  // ✅ <--- C'EST CETTE LIGNE QUI AFFICHE LES TABLEAUX
 }
+
 
 
     </script>
