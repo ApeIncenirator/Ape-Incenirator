@@ -449,44 +449,69 @@ function displayAssets() {
         if (type === "Tokens") fetchTokenBalances(tbody);
         if (type === "Cleanup") fetchTokenBalances(tbody, true);
         if (type === "NFT") fetchNFTs(tbody, false);
-        if (type === "CNFT") fetchNFTs(tbody, true);
+        if (type === "CNFT") return; // Pas encore de support cNFT
+
     });
 
     document.body.appendChild(assetContainer);
 }
 
-function fetchTokenBalances(tbody, isCleanup = false) {
-    fetch("https://rpc.apechain.xyz", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            jsonrpc: "2.0",
-            method: "alchemy_getTokenBalances",
-            params: [connectedAddress],
-            id: 1
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        const tokens = data.result.tokenBalances;
-        tokens.forEach(t => {
-            const balance = BigInt(t.tokenBalance || "0x0");
-            if (balance > 0n) {
-                const shortAddr = t.contractAddress.slice(0, 6) + "..." + t.contractAddress.slice(-4);
-                if ((isCleanup && shortAddr.includes("00")) || !isCleanup) {
-                    const row = document.createElement("tr");
-                    const cell = document.createElement("td");
-                    cell.textContent = `${shortAddr} : ${balance}`;
-                    cell.style.border = "1px solid #ffcc00";
-                    cell.style.padding = "8px";
-                    cell.onclick = () => toggleSelection(row);
-                    row.appendChild(cell);
-                    tbody.appendChild(row);
-                }
-            }
-        });
+const COVALENT_API_KEY = "cqt_rQVmJK6RDCxm9rpDvxvGW47h7CPQ";
+const APECHAIN_CHAIN_ID = 33139;
+
+async function fetchAssetsFromCovalent(address) {
+    const res = await fetch(
+        `https://api.covalenthq.com/v1/${APECHAIN_CHAIN_ID}/address/${address}/balances_v2/?nft=true&no-nft-fetch=false&key=${COVALENT_API_KEY}`
+    );
+    const data = await res.json();
+
+    const items = data.data?.items || [];
+
+    const tokens = items.filter(i => i.type === "cryptocurrency" && i.contract_address !== "");
+    const nfts = items.filter(i => i.type === "nft");
+
+    return { tokens, nfts };
+}
+
+async function fetchTokenBalances(tbody, isCleanup = false) {
+    const { tokens } = await fetchAssetsFromCovalent(connectedAddress);
+
+    tokens.forEach(token => {
+        const balance = Number(token.balance) / 10 ** token.contract_decimals;
+        if (balance > 0) {
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+            cell.textContent = `${token.contract_ticker_symbol} : ${balance.toFixed(4)}`;
+
+            cell.style.border = "1px solid #ffcc00";
+            cell.style.padding = "8px";
+            row.onclick = () => toggleSelection(row);
+            row.appendChild(cell);
+            tbody.appendChild(row);
+        }
     });
 }
+
+async function fetchNFTs(tbody, compressed = false) {
+    const { nfts } = await fetchAssetsFromCovalent(connectedAddress);
+
+    nfts.forEach(nft => {
+        // Aucune simulation si on veut les vrais cNFTs (compressed false = NFT standard)
+        if (compressed) return; // Ne rien afficher si compressed demandé
+
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        const name = nft.contract_name || "Unnamed NFT";
+
+        cell.textContent = `${name} (${nft.contract_address.slice(0, 6)}...)`;
+        cell.style.border = "1px solid #ffcc00";
+        cell.style.padding = "8px";
+        row.onclick = () => toggleSelection(row);
+        row.appendChild(cell);
+        tbody.appendChild(row);
+    });
+}
+
 
 function fetchNFTs(tbody, compressed = false) {
     // À personnaliser selon ton API NFT (ex: Covalent, Moralis, Alchemy NFT API)
