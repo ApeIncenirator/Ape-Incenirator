@@ -333,14 +333,6 @@ const apeChainParams = {
 };
 };
 
-async function toggleWalletPopup() {
-    const popup = document.getElementById("walletPopup");
-    const overlay = document.getElementById("overlay");
-    const show = popup.style.display !== "block";
-    popup.style.display = show ? "block" : "none";
-    overlay.style.display = show ? "block" : "none";
-}
-
 async function switchToApeChain() {
     try {
         await window.ethereum.request({
