@@ -264,35 +264,6 @@
             overlay.style.display = show ? "block" : "none";
         }
 
-
-        async function connectMetamask() {
-    if (typeof window.ethereum === 'undefined') {
-        alert("MetaMask is not installed!");
-        return;
-    }
-
-    try {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const address = accounts[0];
-
-        await window.ethereum.request({
-            method: "personal_sign",
-            params: [
-                `Connect to Ape Incenirator with address ${address}`,
-                address
-            ]
-        });
-
-      
-
-        handleWalletConnected(address);
-    } catch (err) {
-    console.error("Wallet connection error:", err);
-    alert("Connection failed: " + err.message);
-    }
-
-}
-
 async function connectRabby() {
     if (typeof window.ethereum === 'undefined') {
         alert("Rabby (or compatible wallet) not detected!");
@@ -331,7 +302,7 @@ const apeChainParams = {
   rpcUrls: ['https://rpc.apechain.com/http'],
   blockExplorerUrls: ['https://apescan.io']
 };
-};
+
 
 async function switchToApeChain() {
     try {
