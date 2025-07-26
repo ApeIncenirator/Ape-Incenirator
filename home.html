@@ -290,25 +290,34 @@ async function connectRabby() {
 function handleWalletConnected(address) {
     console.log("Wallet connected:", address);
 
-    // Fetch ApeChain assets (example for ERC-20 tokens)
-    function fetchTokenBalances(tbody) {
-  const dummyTokens = [
-    { name: "Banana", balance: 420 },
-    { name: "Pepe", balance: 69 }
-  ];
-  dummyTokens.forEach(t => {
-    const row = document.createElement("tr");
-    const cell = document.createElement("td");
-    cell.textContent = `${t.name}: ${t.balance}`;
-    cell.style.border = "1px solid #ffcc00";
-    cell.style.padding = "8px";
-    row.onclick = () => toggleSelection(row);
-    row.appendChild(cell);
-    tbody.appendChild(row);
-  });
+    connectedAddress = address;
+
+    document.querySelector('.connect-button').style.display = "none";
+    document.querySelector('.container').style.display = "none";
+    document.getElementById("walletPopup").style.display = "none";
+    document.getElementById("overlay").style.display = "none";
+
+    const rightSection = document.querySelector('.right-section');
+    rightSection.innerHTML = ''; // Clear old buttons
+
+    const profileButton = document.createElement("button");
+    profileButton.textContent = "Profil";
+    profileButton.className = "connect-button";
+    profileButton.onclick = () => window.location.href = "user.html";
+
+    const logoutButton = document.createElement("button");
+    logoutButton.textContent = "Déconnecter";
+    logoutButton.className = "connect-button";
+    logoutButton.style.marginLeft = "10px";
+    logoutButton.onclick = disconnectWallet;
+
+    rightSection.appendChild(profileButton);
+    rightSection.appendChild(logoutButton);
+
+    displayAssets();
 }
 
-
+    .then(res => res.json())
     .then(data => {
         const balanceInWei = BigInt(data.result);
         const balanceInEth = Number(balanceInWei) / 1e18;
