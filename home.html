@@ -317,18 +317,36 @@ function handleWalletConnected(address) {
     </script>
     <script>
 let connectedAddress = null;
-const apeChainParams = {
-  chainId: '0x8183', // 33139 en décimal = 0x8183 en hexadécimal
-  chainName: 'ApeChain',
+const APECHAIN_PARAMS = {
+  chainId: "0x8183", // 33139 décimal
+  chainName: "ApeChain",
   nativeCurrency: {
-    name: 'ApeCoin',
-    symbol: 'APE',
+    name: "ApeCoin",
+    symbol: "APE",
     decimals: 18
   },
-  rpcUrls: ['https://rpc.apechain.com/http'],
-  blockExplorerUrls: ['https://apescan.io']
+  rpcUrls: ["https://rpc.apechain.com/http"],
+  blockExplorerUrls: ["https://apescan.io"]
 };
-};
+
+async function switchToApeChain() {
+  try {
+    await window.ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: APECHAIN_PARAMS.chainId }]
+    });
+  } catch (switchError) {
+    if (switchError.code === 4902) {
+      await window.ethereum.request({
+        method: "wallet_addEthereumChain",
+        params: [APECHAIN_PARAMS]
+      });
+    } else {
+      throw switchError;
+    }
+  }
+}
+
 
 async function toggleWalletPopup() {
     const popup = document.getElementById("walletPopup");
@@ -357,20 +375,21 @@ async function switchToApeChain() {
 }
 
 async function connectMetamask() {
-    if (!window.ethereum) return alert("MetaMask not installed!");
-    await switchToApeChain();
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const address = accounts[0];
-    await signAndHandleConnection(address);
+  if (!window.ethereum) return alert("MetaMask not installed!");
+  await switchToApeChain();
+  const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+  const address = accounts[0];
+  await signAndHandleConnection(address);
 }
 
 async function connectRabby() {
-    if (!window.ethereum) return alert("Rabby not detected!");
-    await switchToApeChain();
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const address = accounts[0];
-    await signAndHandleConnection(address);
+  if (!window.ethereum) return alert("Rabby not detected!");
+  await switchToApeChain();
+  const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+  const address = accounts[0];
+  await signAndHandleConnection(address);
 }
+
 
 async function signAndHandleConnection(address) {
     await window.ethereum.request({
