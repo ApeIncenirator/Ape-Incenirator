@@ -283,45 +283,7 @@
             ]
         });
 
-        function displayAssets() {
-    const assetContainer = document.createElement("div");
-    assetContainer.style.display = "flex";
-    assetContainer.style.justifyContent = "space-around";
-    assetContainer.style.margin = "40px";
-    assetContainer.style.gap = "20px";
-
-    const types = ["Tokens", "Cleanup", "NFT", "CNFT"];
-    types.forEach(type => {
-        const table = document.createElement("table");
-        table.style.border = "2px solid #ffcc00";
-        table.style.color = "white";
-        table.style.minWidth = "150px";
-        table.style.borderCollapse = "collapse";
-
-        const thead = document.createElement("thead");
-        const tr = document.createElement("tr");
-        const th = document.createElement("th");
-        th.textContent = type;
-        th.style.backgroundColor = "#2a2a2a";
-        th.style.color = "#ffcc00";
-        th.style.padding = "10px";
-        tr.appendChild(th);
-        thead.appendChild(tr);
-        table.appendChild(thead);
-
-        const tbody = document.createElement("tbody");
-        table.appendChild(tbody);
-        assetContainer.appendChild(table);
-
-        if (type === "Tokens") fetchTokenBalances(tbody);
-        if (type === "Cleanup") fetchTokenBalances(tbody, true);
-        if (type === "NFT") fetchNFTs(tbody, false);
-        if (type === "CNFT") return; // Pas encore de support cNFT
-
-    });
-
-    document.body.appendChild(assetContainer);
-}
+      
 
         handleWalletConnected(address);
     } catch (err) {
@@ -509,6 +471,45 @@ function disconnectWallet() {
 </script>
 
 <script>
+  function displayAssets() {
+    const assetContainer = document.createElement("div");
+    assetContainer.style.display = "flex";
+    assetContainer.style.justifyContent = "space-around";
+    assetContainer.style.margin = "40px";
+    assetContainer.style.gap = "20px";
+
+    const types = ["Tokens", "Cleanup", "NFT", "CNFT"];
+    types.forEach(type => {
+        const table = document.createElement("table");
+        table.style.border = "2px solid #ffcc00";
+        table.style.color = "white";
+        table.style.minWidth = "150px";
+        table.style.borderCollapse = "collapse";
+
+        const thead = document.createElement("thead");
+        const tr = document.createElement("tr");
+        const th = document.createElement("th");
+        th.textContent = type;
+        th.style.backgroundColor = "#2a2a2a";
+        th.style.color = "#ffcc00";
+        th.style.padding = "10px";
+        tr.appendChild(th);
+        thead.appendChild(tr);
+        table.appendChild(thead);
+
+        const tbody = document.createElement("tbody");
+        table.appendChild(tbody);
+        assetContainer.appendChild(table);
+
+        if (type === "Tokens") fetchTokenBalances(tbody);
+        if (type === "Cleanup") fetchTokenBalances(tbody, true);
+        if (type === "NFT") fetchNFTs(tbody, false);
+        if (type === "CNFT") return; // Pas encore de support cNFT
+
+    });
+
+    document.body.appendChild(assetContainer);
+}
 function handleWalletConnected(address) {
     connectedAddress = address;
 
