@@ -308,7 +308,7 @@ function handleWalletConnected(address) {
   });
 }
 
-    .then(res => res.json())
+
     .then(data => {
         const balanceInWei = BigInt(data.result);
         const balanceInEth = Number(balanceInWei) / 1e18;
