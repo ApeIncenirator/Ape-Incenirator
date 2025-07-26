@@ -291,23 +291,16 @@ function handleWalletConnected(address) {
     console.log("Wallet connected:", address);
 
     // Fetch ApeChain assets (example for ERC-20 tokens)
-    function fetchTokenBalances(tbody) {
-  const dummyTokens = [
-    { name: "Banana", balance: 420 },
-    { name: "Pepe", balance: 69 }
-  ];
-  dummyTokens.forEach(t => {
-    const row = document.createElement("tr");
-    const cell = document.createElement("td");
-    cell.textContent = `${t.name}: ${t.balance}`;
-    cell.style.border = "1px solid #ffcc00";
-    cell.style.padding = "8px";
-    row.onclick = () => toggleSelection(row);
-    row.appendChild(cell);
-    tbody.appendChild(row);
-  });
-}
-
+    fetch("https://rpc.apechain.xyz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            jsonrpc: "2.0",
+            method: "eth_getBalance",
+            params: [address, "latest"],
+            id: 1
+        })
+    })
     .then(res => res.json())
     .then(data => {
         const balanceInWei = BigInt(data.result);
@@ -324,36 +317,18 @@ function handleWalletConnected(address) {
     </script>
     <script>
 let connectedAddress = null;
-const APECHAIN_PARAMS = {
-  chainId: "0x8183", // 33139 décimal
-  chainName: "ApeChain",
+const apeChainParams = {
+  chainId: '0x8183', // 33139 en décimal = 0x8183 en hexadécimal
+  chainName: 'ApeChain',
   nativeCurrency: {
-    name: "ApeCoin",
-    symbol: "APE",
+    name: 'ApeCoin',
+    symbol: 'APE',
     decimals: 18
   },
-  rpcUrls: ["https://rpc.apechain.com/http"],
-  blockExplorerUrls: ["https://apescan.io"]
+  rpcUrls: ['https://rpc.apechain.com/http'],
+  blockExplorerUrls: ['https://apescan.io']
 };
-
-async function switchToApeChain() {
-  try {
-    await window.ethereum.request({
-      method: "wallet_switchEthereumChain",
-      params: [{ chainId: APECHAIN_PARAMS.chainId }]
-    });
-  } catch (switchError) {
-    if (switchError.code === 4902) {
-      await window.ethereum.request({
-        method: "wallet_addEthereumChain",
-        params: [APECHAIN_PARAMS]
-      });
-    } else {
-      throw switchError;
-    }
-  }
-}
-
+};
 
 async function toggleWalletPopup() {
     const popup = document.getElementById("walletPopup");
@@ -382,21 +357,20 @@ async function switchToApeChain() {
 }
 
 async function connectMetamask() {
-  if (!window.ethereum) return alert("MetaMask not installed!");
-  await switchToApeChain();
-  const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-  const address = accounts[0];
-  await signAndHandleConnection(address);
+    if (!window.ethereum) return alert("MetaMask not installed!");
+    await switchToApeChain();
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const address = accounts[0];
+    await signAndHandleConnection(address);
 }
 
 async function connectRabby() {
-  if (!window.ethereum) return alert("Rabby not detected!");
-  await switchToApeChain();
-  const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-  const address = accounts[0];
-  await signAndHandleConnection(address);
+    if (!window.ethereum) return alert("Rabby not detected!");
+    await switchToApeChain();
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const address = accounts[0];
+    await signAndHandleConnection(address);
 }
-
 
 async function signAndHandleConnection(address) {
     await window.ethereum.request({
@@ -481,22 +455,17 @@ function displayAssets() {
     document.body.appendChild(assetContainer);
 }
 
-function fetchTokenBalances(tbody) {
-  const dummyTokens = [
-    { name: "Banana", balance: 420 },
-    { name: "Pepe", balance: 69 }
-  ];
-  dummyTokens.forEach(t => {
-    const row = document.createElement("tr");
-    const cell = document.createElement("td");
-    cell.textContent = `${t.name}: ${t.balance}`;
-    cell.style.border = "1px solid #ffcc00";
-    cell.style.padding = "8px";
-    row.onclick = () => toggleSelection(row);
-    row.appendChild(cell);
-    tbody.appendChild(row);
-  });
-}
+function fetchTokenBalances(tbody, isCleanup = false) {
+    fetch("https://rpc.apechain.xyz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            jsonrpc: "2.0",
+            method: "alchemy_getTokenBalances",
+            params: [connectedAddress],
+            id: 1
+        })
+    })
     .then(res => res.json())
     .then(data => {
         const tokens = data.result.tokenBalances;
