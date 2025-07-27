@@ -186,6 +186,8 @@
   <button id="profile-button" class="connect-button" style="display:none;" onclick="window.location.href='user.html'">Profil</button>
   <button id="disconnect-button" class="connect-button" style="display:none;" onclick="disconnectWallet()">Déconnecter</button>
 </div>
+<div id="overlay"></div>
+
 
        
     </header>
@@ -262,7 +264,7 @@ const apeChainParams = {
     symbol: 'APE',
     decimals: 18
   },
-  rpcUrls: ['http://rpc.apechain.com/'],
+  rpcUrls: ['https://rpc.apechain.com/'],
   blockExplorerUrls: ['https://apescan.io']
 };
 
