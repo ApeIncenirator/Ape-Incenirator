@@ -252,16 +252,17 @@
     <script>
 let connectedAddress = null;
 const apeChainParams = {
-  chainId: '0x8183', // 33139 en décimal = 0x8183 en hexadécimal
+  chainId: '0x8183', // 33155 en hex
   chainName: 'ApeChain',
   nativeCurrency: {
     name: 'ApeCoin',
     symbol: 'APE',
     decimals: 18
   },
-  rpcUrls: ['https://rpc.apechain.com/http'],
+  rpcUrls: ['https://rpc.apechain.com'], // ✅ correction ici
   blockExplorerUrls: ['https://apescan.io']
 };
+
 
 
 async function switchToApeChain() {
@@ -396,21 +397,46 @@ function disconnectWallet() {
   
 async function connectMetamask() {
     if (!window.ethereum || !window.ethereum.isMetaMask || !window.ethereum.request) {
-    alert("No Ethereum provider found. Please install MetaMask.");
-    return;
-}
-
-
+        alert("No Ethereum provider found. Please install MetaMask.");
+        return;
+    }
 
     try {
-        await switchToApeChain();
+        // Étape 1 : Connexion au wallet
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         const address = accounts[0];
+
+        // Étape 2 : Vérifie si le user est déjà sur ApeChain
+        const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+
+        if (currentChainId !== apeChainParams.chainId) {
+            // Étape 3 : S'il est sur un autre réseau, tenter de switcher
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: apeChainParams.chainId }]
+                });
+            } catch (switchError) {
+                // S'il n’a pas le réseau, l'ajouter
+                if (switchError.code === 4902) {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [apeChainParams]
+                    });
+                } else {
+                    throw switchError;
+                }
+            }
+        }
+
+        // Étape 4 : Signature et affichage
         await signAndHandleConnection(address);
+
     } catch (e) {
         alert("Error connecting to MetaMask: " + e.message);
     }
 }
+
 function displayAssets() {
     const assetContainer = document.createElement("div");
     assetContainer.style.display = "flex";
