@@ -376,14 +376,15 @@ function toggleSelection(row) {
 function disconnectWallet() {
     connectedAddress = null;
 
+    // Affiche bouton de connexion, cache les autres
+    document.getElementById("connect-wallet").style.display = "block";
     document.getElementById("profile-button").style.display = "none";
     document.getElementById("disconnect-button").style.display = "none";
-    document.getElementById("connect-wallet").style.display = "block";
 
     // Réaffiche la FAQ
     document.querySelector('.container').style.display = "block";
 
-    // Cache les colonnes
+    // Cache les colonnes d'assets
     document.getElementById("token-column").style.display = "none";
     document.getElementById("cleanup-column").style.display = "none";
     document.getElementById("nft-column").style.display = "none";
@@ -394,6 +395,18 @@ function disconnectWallet() {
     document.getElementById("cleanup-table").innerHTML = "";
     document.getElementById("nft-table").innerHTML = "";
     document.getElementById("cnft-table").innerHTML = "";
+
+    // Vider la section des boutons (au cas où c'est elle qui les affiche)
+    const rightSection = document.querySelector('.right-section');
+    rightSection.innerHTML = '';
+
+    // Restaurer le bouton de connexion
+    const connectButton = document.createElement("button");
+    connectButton.textContent = "Connect Wallet";
+    connectButton.className = "connect-button";
+    connectButton.id = "connect-wallet";
+    connectButton.onclick = connectMetamask;
+    rightSection.appendChild(connectButton);
 }
 
 </script>
