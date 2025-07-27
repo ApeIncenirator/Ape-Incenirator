@@ -175,7 +175,8 @@
         <div class="center-section">
             <img src="logo.png" alt="Logo" height="214" />
         </div>
-<button class="connect-button">Connect Wallet</button>
+<button class="connect-button" onclick="connectMetamask()">Connect Wallet</button>
+
 
        
     </header>
@@ -304,12 +305,6 @@ async function signAndHandleConnection(address) {
     }
 }
 
-
-function disconnectWallet() {
-    connectedAddress = null;
-    location.reload();
-}
-
 const COVALENT_API_KEY = "cqt_rQVmJK6RDCxm9rpDvxvGW47h7CPQ";
 const APECHAIN_CHAIN_ID = 33139;
 
@@ -400,14 +395,11 @@ function disconnectWallet() {
 <script>
   
 async function connectMetamask() {
-    if (!window.ethereum || !window.ethereum.isMetaMask) {
-        alert("MetaMask not detected in your browser");
-        return;
-    }
-if (!window.ethereum || !window.ethereum.request) {
-  alert("No Ethereum provider found. Please install MetaMask.");
-  return;
+    if (!window.ethereum || !window.ethereum.isMetaMask || !window.ethereum.request) {
+    alert("No Ethereum provider found. Please install MetaMask.");
+    return;
 }
+
 
 
     try {
