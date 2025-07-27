@@ -46,9 +46,14 @@
 
         .left-section,
         .right-section {
-            display: flex;
-            align-items: center;
-        }
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 25%;
+    right: 3.5%;
+    gap: 10px;
+}
+
 
         .left-section {
             position: absolute;
@@ -176,8 +181,11 @@
             <img src="logo.png" alt="Logo" height="214" />
         </div>
 
-<div class="right-section"></div>
-
+<div class="right-section">
+    <button id="connect-wallet" class="connect-button" onclick="connectMetamask()">Connect Wallet</button>
+  <button id="profile-button" class="connect-button" style="display:none;" onclick="window.location.href='user.html'">Profil</button>
+  <button id="disconnect-button" class="connect-button" style="display:none;" onclick="disconnectWallet()">Déconnecter</button>
+</div>
 
        
     </header>
@@ -240,13 +248,6 @@
 <div id="cnft-column" style="display:none; border: 1px solid yellow;">
   <h3>cNFTs</h3>
   <table id="cnft-table"></table>
-</div>
-
-<!-- Boutons du haut à droite -->
-<div id="wallet-controls" style="position:fixed; top:20px; right:20px;">
-  <button id="connect-wallet" onclick="connectMetamask()">Connect Wallet</button>
-  <button id="profile-button" style="display:none;" onclick="window.location.href='user.html'">Profil</button>
-  <button id="disconnect-button" style="display:none;" onclick="disconnectWallet()">Déconnecter</button>
 </div>
 
     </div>
