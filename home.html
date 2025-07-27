@@ -173,7 +173,8 @@
         </div>
 
         <div class="right-section">
-            <button class="connect-button" onclick="toggleWalletPopup()">Connect Wallet</button>
+           <button class="connect-button" onclick="connectMetamask()">Connect Wallet</button>
+
 
         </div>
     </header>
@@ -246,25 +247,6 @@
 </div>
     </div>
 
-    <div id="overlay" onclick="toggleWalletPopup()"></div>
-
-    <div class="wallet-popup" id="walletPopup">
-        <h3>Connect your wallet</h3>
-        <button id="metamask-btn">Connect with MetaMask</button>
-        <button id="rabby-btn">Connect with Rabby</button>
-
-    </div>
-
-    <script>
-        function toggleWalletPopup() {
-            const popup = document.getElementById("walletPopup");
-            const overlay = document.getElementById("overlay");
-            const show = popup.style.display !== "block";
-            popup.style.display = show ? "block" : "none";
-            overlay.style.display = show ? "block" : "none";
-        }
-
-    </script>
     <script>
 let connectedAddress = null;
 const apeChainParams = {
@@ -508,12 +490,6 @@ function handleWalletConnected(address) {
     // Affichage des assets
     displayAssets();
 }
-</script>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("metamask-btn").addEventListener("click", connectMetamask);
-    document.getElementById("rabby-btn").addEventListener("click", connectRabby);
-  });
 </script>
 
 </body>
