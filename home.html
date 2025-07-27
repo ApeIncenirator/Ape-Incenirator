@@ -175,7 +175,8 @@
         <div class="center-section">
             <img src="logo.png" alt="Logo" height="214" />
         </div>
-<button class="connect-button" onclick="connectMetamask()">Connect Wallet</button>
+
+<div class="right-section"></div>
 
 
        
@@ -243,7 +244,7 @@
 
 <!-- Boutons du haut à droite -->
 <div id="wallet-controls" style="position:absolute; top:20px; right:20px;">
-  <button id="connect-wallet" onclick="connectWallet()">Connect Wallet</button>
+  <button id="connect-wallet" onclick="connectMetamask()">Connect Wallet</button>
   <button id="profile-button" style="display:none;" onclick="window.location.href='user.html'">Profil</button>
   <button id="disconnect-button" style="display:none;" onclick="disconnectWallet()">Déconnecter</button>
 </div>
@@ -481,7 +482,6 @@ function handleWalletConnected(address) {
 
     // Afficher/Désactiver éléments UI
     document.querySelector('.connect-button').style.display = "none";
-    document.getElementById("walletPopup").style.display = "none";
     document.getElementById("overlay").style.display = "none";
 
     // Afficher la FAQ = FALSE
