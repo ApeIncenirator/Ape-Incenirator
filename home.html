@@ -184,7 +184,6 @@
 <div class="right-section">
     <button id="connect-wallet" class="connect-button" onclick="connectMetamask()">Connect Wallet</button>
   <button id="profile-button" class="connect-button" style="display:none;" onclick="window.location.href='user.html'">Profil</button>
-  <button id="disconnect-button" class="connect-button" style="display:none;" onclick="disconnectWallet()">Déconnecter</button>
 </div>
 <div id="overlay"></div>
 
@@ -373,45 +372,6 @@ function toggleSelection(row) {
 </script>
 
 <script>
-function disconnectWallet() {
-    connectedAddress = null;
-
-    // Affiche bouton de connexion, cache les autres
-    document.getElementById("connect-wallet").style.display = "block";
-    document.getElementById("profile-button").style.display = "none";
-    document.getElementById("disconnect-button").style.display = "none";
-
-    // Réaffiche la FAQ
-    document.querySelector('.container').style.display = "block";
-
-    // Cache les colonnes d'assets
-    document.getElementById("token-column").style.display = "none";
-    document.getElementById("cleanup-column").style.display = "none";
-    document.getElementById("nft-column").style.display = "none";
-    document.getElementById("cnft-column").style.display = "none";
-
-    // Vide les tableaux
-    document.getElementById("tokens-table").innerHTML = "";
-    document.getElementById("cleanup-table").innerHTML = "";
-    document.getElementById("nft-table").innerHTML = "";
-    document.getElementById("cnft-table").innerHTML = "";
-
-    // Vider la section des boutons (au cas où c'est elle qui les affiche)
-    const rightSection = document.querySelector('.right-section');
-    rightSection.innerHTML = '';
-
-    // Restaurer le bouton de connexion
-    const connectButton = document.createElement("button");
-    connectButton.textContent = "Connect Wallet";
-    connectButton.className = "connect-button";
-    connectButton.id = "connect-wallet";
-    connectButton.onclick = connectMetamask;
-    rightSection.appendChild(connectButton);
-}
-
-</script>
-
-<script>
   
 async function connectMetamask() {
     if (!window.ethereum || !window.ethereum.isMetaMask || !window.ethereum.request) {
@@ -518,12 +478,6 @@ function handleWalletConnected(address) {
     profileButton.textContent = "Profil";
     profileButton.className = "connect-button";
     profileButton.onclick = () => window.location.href = "user.html";
-
-    const logoutButton = document.createElement("button");
-    logoutButton.textContent = "Déconnecter";
-    logoutButton.className = "connect-button";
-    logoutButton.style.marginLeft = "10px";
-    logoutButton.onclick = disconnectWallet;
 
     rightSection.appendChild(profileButton);
     rightSection.appendChild(logoutButton);
