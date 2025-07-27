@@ -398,7 +398,28 @@ function disconnectWallet() {
 </script>
 
 <script>
-  function displayAssets() {
+  
+async function connectMetamask() {
+    if (!window.ethereum || !window.ethereum.isMetaMask) {
+        alert("MetaMask not detected in your browser");
+        return;
+    }
+if (!window.ethereum || !window.ethereum.request) {
+  alert("No Ethereum provider found. Please install MetaMask.");
+  return;
+}
+
+
+    try {
+        await switchToApeChain();
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const address = accounts[0];
+        await signAndHandleConnection(address);
+    } catch (e) {
+        alert("Error connecting to MetaMask: " + e.message);
+    }
+}
+function displayAssets() {
     const assetContainer = document.createElement("div");
     assetContainer.style.display = "flex";
     assetContainer.style.justifyContent = "space-around";
@@ -436,21 +457,6 @@ function disconnectWallet() {
     });
 
     document.body.appendChild(assetContainer);
-}
-async function connectMetamask() {
-    if (!window.ethereum || !window.ethereum.isMetaMask) {
-        alert("MetaMask not detected in your browser");
-        return;
-    }
-
-    try {
-        await switchToApeChain();
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const address = accounts[0];
-        await signAndHandleConnection(address);
-    } catch (e) {
-        alert("Error connecting to MetaMask: " + e.message);
-    }
 }
 function handleWalletConnected(address) {
     connectedAddress = address;
