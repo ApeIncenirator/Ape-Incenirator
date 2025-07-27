@@ -171,12 +171,9 @@
         <div class="center-section">
             <img src="logo.png" alt="Logo" height="214" />
         </div>
+<button class="connect-button">Connect Wallet</button>
 
-        <div class="right-section">
-           <button class="connect-button" onclick="connectMetamask()">Connect Wallet</button>
-
-
-        </div>
+       
     </header>
 
     <div class="container">
@@ -266,34 +263,18 @@ async function switchToApeChain() {
     try {
         await window.ethereum.request({
             method: 'wallet_switchEthereumChain',
-            params: [{ chainId: APECHAIN_PARAMS.chainId }]
+            params: [{ chainId: apeChainParams.chainId }]
         });
     } catch (switchError) {
         if (switchError.code === 4902) {
             await window.ethereum.request({
                 method: 'wallet_addEthereumChain',
-                params: [APECHAIN_PARAMS]
+                params: [apeChainParams]
             });
         } else {
             throw switchError;
         }
     }
-}
-
-async function connectMetamask() {
-    if (!window.ethereum) return alert("MetaMask not installed!");
-    await switchToApeChain();
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const address = accounts[0];
-    await signAndHandleConnection(address);
-}
-
-async function connectRabby() {
-    if (!window.ethereum) return alert("Rabby not detected!");
-    await switchToApeChain();
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const address = accounts[0];
-    await signAndHandleConnection(address);
 }
 
 async function signAndHandleConnection(address) {
@@ -452,6 +433,21 @@ function disconnectWallet() {
 
     document.body.appendChild(assetContainer);
 }
+async function connectMetamask() {
+    if (!window.ethereum || !window.ethereum.isMetaMask) {
+        alert("MetaMask not detected in your browser");
+        return;
+    }
+
+    try {
+        await switchToApeChain();
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const address = accounts[0];
+        await signAndHandleConnection(address);
+    } catch (e) {
+        alert("Error connecting to MetaMask: " + e.message);
+    }
+}
 function handleWalletConnected(address) {
     connectedAddress = address;
 
@@ -492,6 +488,12 @@ function handleWalletConnected(address) {
 }
 </script>
 
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const btn = document.querySelector(".connect-button");
+    if (btn) btn.addEventListener("click", connectMetamask);
+  });
+</script>
 </body>
 
 </html>
