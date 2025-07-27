@@ -73,18 +73,20 @@
         }
 
         .connect-button {
-            padding: 12px 20px;
-            background-color: #ffcc00;
-            color: black;
-            border: none;
-            position: fixed;
-            top: 7.3%;
-            left: 91%;
-            border-radius: 654px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
-        }
+    padding: 12px 20px;
+    background-color: #ffcc00;
+    color: black;
+    border: none;
+    position: fixed;
+    top: 7.3%;
+    left: 91%;
+    border-radius: 654px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    z-index: 2000; /* ✅ ajouté pour passer au-dessus de l'entête */
+}
+
 
         .container {
             max-width: 800px;
@@ -248,7 +250,6 @@
   <button id="profile-button" style="display:none;" onclick="window.location.href='user.html'">Profil</button>
   <button id="disconnect-button" style="display:none;" onclick="disconnectWallet()">Déconnecter</button>
 </div>
-<button id="connect-wallet" class="connect-button" onclick="connectMetamask()">Connect Wallet</button>
 
     </div>
 
