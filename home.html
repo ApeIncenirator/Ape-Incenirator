@@ -231,6 +231,9 @@
             <div class="faq-question">Who made the Ape Incenirator?</div>
             <div class="faq-answer">Created by JK Labs. Visit our Twitter for more info!</div>
         </div>
+
+<div id="columns-wrapper" style="display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 40px;">
+
 <div id="token-column" style="display:none; border: 1px solid yellow;">
   <h3>Tokens</h3>
   <table id="tokens-table"></table>
@@ -246,7 +249,11 @@
   <table id="nft-table"></table>
 </div>
 
-<div id="cnft-column" style="display:none; border: 1px solid yellow;">
+</div>
+<div id="cnft-column" ...>
+</div>
+</div> <!-- fin columns-wrapper -->
+
   <h3>cNFTs</h3>
   <table id="cnft-table"></table>
 </div>
@@ -415,45 +422,7 @@ async function connectMetamask() {
     }
 }
 
-function displayAssets() {
-    const assetContainer = document.createElement("div");
-    assetContainer.style.display = "flex";
-    assetContainer.style.justifyContent = "space-around";
-    assetContainer.style.margin = "40px";
-    assetContainer.style.gap = "20px";
 
-    const types = ["Tokens", "Cleanup", "NFT", "CNFT"];
-    types.forEach(type => {
-        const table = document.createElement("table");
-        table.style.border = "2px solid #ffcc00";
-        table.style.color = "white";
-        table.style.minWidth = "150px";
-        table.style.borderCollapse = "collapse";
-
-        const thead = document.createElement("thead");
-        const tr = document.createElement("tr");
-        const th = document.createElement("th");
-        th.textContent = type;
-        th.style.backgroundColor = "#2a2a2a";
-        th.style.color = "#ffcc00";
-        th.style.padding = "10px";
-        tr.appendChild(th);
-        thead.appendChild(tr);
-        table.appendChild(thead);
-
-        const tbody = document.createElement("tbody");
-        table.appendChild(tbody);
-        assetContainer.appendChild(table);
-
-        if (type === "Tokens") fetchTokenBalances(tbody);
-        if (type === "Cleanup") fetchTokenBalances(tbody, true);
-        if (type === "NFT") fetchNFTs(tbody, false);
-        if (type === "CNFT") return; // Pas encore de support cNFT
-
-    });
-
-    document.body.appendChild(assetContainer);
-}
 function handleWalletConnected(address) {
     connectedAddress = address;
 
@@ -482,8 +451,12 @@ function handleWalletConnected(address) {
     rightSection.appendChild(profileButton);
 
     // Affichage des assets
-    displayAssets();
-}
+   // Remplir les tableaux HTML existants
+fetchTokenBalances(document.getElementById("tokens-table"));
+fetchTokenBalances(document.getElementById("cleanup-table"), true);
+fetchNFTs(document.getElementById("nft-table"), false);
+// fetchNFTs(document.getElementById("cnft-table"), true); // à activer si tu veux afficher les cNFT
+
 </script>
 
 </body>
